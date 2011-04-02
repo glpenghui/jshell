@@ -21,31 +21,36 @@
  */
 package org.jshell;
 
-import java.util.Arrays;
-import org.junit.Test;
-import static junit.framework.Assert.*;
-
 /**
  *
  * @author Fabien Barbero
  */
-public class SplitRegexTest {
+public abstract class AbstractShellCommand implements ShellCommand {
 
-    @Test
-    public void testSplit() {
-        Shell shell = new Shell();
+    private static final String HELP_ARGUMENT = "-help";
 
-        String[] splittedText = shell.splitCommandLine("ps -e aux");
-        assertEquals(3, splittedText.length);
-        assertTrue(Arrays.equals(splittedText, new String[] {"ps", "-e", "aux"}));
+    private final String name;
 
-        splittedText = shell.splitCommandLine("ps \"-e aux\"");
-        assertEquals(2, splittedText.length);
-        assertTrue(Arrays.equals(splittedText, new String[] {"ps", "-e aux"}));
-
-        splittedText = shell.splitCommandLine("ps \"-e aux\" grep");
-        assertEquals(3, splittedText.length);
-        assertTrue(Arrays.equals(splittedText, new String[] {"ps", "-e aux", "grep"}));
+    public AbstractShellCommand(String name) {
+        this.name = name;
     }
 
+    @Override
+    public final String name() {
+        return name;
+    }
+
+    @Override
+    public final void execute(ArgumentsList args, ShellHandler handler) throws Exception {
+        if(args.containsArgument(HELP_ARGUMENT)) {
+            handler.println(getHelpMessage());
+        } else {
+            executeCommand(args, handler);
+        }
+    }
+
+    protected abstract String getHelpMessage();
+
+    protected abstract void executeCommand(ArgumentsList args, ShellHandler handler) throws Exception;
+    
 }
