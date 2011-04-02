@@ -9,9 +9,9 @@
     <name>JShell</name>
 
     <scm>
-        <connection>scm:svn:https://jshell.googlecode.com/svn/trunk/jshell</connection>
-        <developerConnection>scm:svn:https://jshell.googlecode.com/svn/trunk/jshell</developerConnection>
-        <url>https://jshell.googlecode.com/svn/trunk/jshell</url>
+        <connection>scm:svn:https://jshell.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://jshell.googlecode.com/svn/trunk</developerConnection>
+        <url>https://jshell.googlecode.com/svn/trunk</url>
     </scm>
     
     <build>
