@@ -21,9 +21,15 @@
  */
 package org.jshell;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import jline.ConsoleReader;
+import jline.FileNameCompletor;
+import jline.SimpleCompletor;
 
 /**
  *
@@ -82,8 +88,17 @@ public class Shell {
     /**
      * Start of the shell.
      */
-    public final synchronized void start() {
-        ShellIO shellIO = new SystemShellIO();
+    public final synchronized void start() throws IOException {
+        ConsoleReader reader = new ConsoleReader();
+        List<String> commandsName = new ArrayList<String>();
+        for(ShellCommand command : commands) {
+            commandsName.add(command.name());
+        }
+        reader.addCompletor(new FileNameCompletor());
+        reader.addCompletor(new SimpleCompletor(commandsName.toArray(new String[]{})));
+        reader.setDefaultPrompt(prompt);
+
+        ShellIO shellIO = new SystemShellIO(reader);
 
         if(header != null) {
             shellIO.println(header);
@@ -102,7 +117,7 @@ public class Shell {
                 if(i == commandsStr.length -1) {
                     commandIO = shellIO;
                 } else {
-                    commandIO = new ShellIO();
+                    commandIO = new ShellIO(reader);
                 }
                 String[] splitCommand = splitCommandLine(commandsStr[i].trim());
                 if(splitCommand.length > 0) {
@@ -122,7 +137,7 @@ public class Shell {
                     }
                 }
             }
-
+            
             shellIO.println();
         }
     }
