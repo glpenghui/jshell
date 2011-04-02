@@ -21,14 +21,28 @@
  */
 package org.jshell;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Fabien Barbero
  */
-public interface ShellCommand {
+public final class ShellBuffer {
 
-    String name();
+    private final List<String> buffer = new LinkedList<String>();
 
-    void execute(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception;
+    synchronized void addLine(String line) {
+        buffer.add(line);
+    }
+
+    public synchronized boolean isEmpty() {
+        return buffer.isEmpty();
+    }
+
+    public Iterator<String> getContent() {
+        return buffer.iterator();
+    }
 
 }

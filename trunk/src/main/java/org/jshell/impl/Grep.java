@@ -19,16 +19,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jshell;
+package org.jshell.impl;
+
+import java.util.Iterator;
+import org.jshell.AbstractShellCommand;
+import org.jshell.ArgumentsList;
+import org.jshell.ShellBuffer;
+import org.jshell.ShellIO;
 
 /**
  *
  * @author Fabien Barbero
  */
-public interface ShellCommand {
+public class Grep extends AbstractShellCommand {
 
-    String name();
+    public Grep() {
+        super("grep");
+    }
 
-    void execute(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception;
+    @Override
+    protected String getHelpMessage() {
+        return "Prints lines which match the given value";
+    }
+
+    @Override
+    protected void executeCommand(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception {
+        String value = args.getArgumentAt(0);
+        if(value == null) {
+            handler.println("No valut to match");
+            return;
+        }
+        value = value.toLowerCase();
+
+        Iterator<String> it = inputBuffer.getContent();
+        while(it.hasNext()) {
+            String line = it.next();
+            if(line.toLowerCase().contains(value)) {
+                handler.println(line);
+            }
+        }
+    }
 
 }

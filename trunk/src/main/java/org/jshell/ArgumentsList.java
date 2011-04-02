@@ -50,6 +50,9 @@ public final class ArgumentsList {
      * @return      The argument found.
      */
     public String getArgumentAt(int index) {
+        if(index > argsList.size()-1) {
+            return null;
+        }
         return argsList.get(index);
     }
 

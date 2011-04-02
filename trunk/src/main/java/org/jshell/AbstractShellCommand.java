@@ -41,16 +41,21 @@ public abstract class AbstractShellCommand implements ShellCommand {
     }
 
     @Override
-    public final void execute(ArgumentsList args, ShellHandler handler) throws Exception {
+    public final void execute(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception {
         if(args.containsArgument(HELP_ARGUMENT)) {
             handler.println(getHelpMessage());
         } else {
-            executeCommand(args, handler);
+            executeCommand(args, inputBuffer, handler);
         }
     }
 
     protected abstract String getHelpMessage();
 
-    protected abstract void executeCommand(ArgumentsList args, ShellHandler handler) throws Exception;
-    
+    protected abstract void executeCommand(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception;
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

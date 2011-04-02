@@ -19,16 +19,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jshell;
+package org.jshell.impl;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import org.jshell.AbstractShellCommand;
+import org.jshell.ArgumentsList;
+import org.jshell.ShellBuffer;
+import org.jshell.ShellIO;
 
 /**
  *
  * @author Fabien Barbero
  */
-public interface ShellCommand {
+public class Cat extends AbstractShellCommand {
 
-    String name();
+    public Cat() {
+        super("cat");
+    }
 
-    void execute(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception;
+    @Override
+    protected String getHelpMessage() {
+        return "prints the content of a file";
+    }
+
+    @Override
+    protected void executeCommand(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception {
+        String filePath = args.getArgumentAt(0);
+        if(filePath == null) {
+            handler.println("No file to print");
+            return;
+        }
+        BufferedReader fileReader = null;
+        try {
+            fileReader = new BufferedReader(new FileReader(filePath));
+            String line;
+            while((line = fileReader.readLine()) != null) {
+                handler.println(line);
+            }
+        } finally {
+            if(fileReader != null) {
+                fileReader.close();
+            }
+        }
+    }
 
 }
