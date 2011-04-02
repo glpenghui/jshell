@@ -21,9 +21,8 @@
  */
 package org.jshell;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import jline.ConsoleReader;
 
 /**
  *
@@ -31,8 +30,13 @@ import java.io.InputStreamReader;
  */
 public class ShellIO {
 
-    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private final ShellBuffer buffer = new ShellBuffer();
+    private final ConsoleReader reader;
+
+    ShellIO(ConsoleReader reader) {
+        this.reader = reader;
+    }
+
 
     /**
      * Ask a text in the shell.

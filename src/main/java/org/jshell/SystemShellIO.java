@@ -21,11 +21,18 @@
  */
 package org.jshell;
 
+import jline.ConsoleReader;
+
 /**
  *
  * @author Fabien Barbero
  */
 final class SystemShellIO extends ShellIO {
+
+    public SystemShellIO(ConsoleReader reader) {
+        super(reader);
+    }
+
 
     @Override
     public void println(String str) {
