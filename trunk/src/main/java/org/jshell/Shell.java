@@ -94,7 +94,6 @@ public class Shell {
         for(ShellCommand command : commands) {
             commandsName.add(command.name());
         }
-        reader.addCompletor(new FileNameCompletor());
         reader.addCompletor(new SimpleCompletor(commandsName.toArray(new String[]{})));
         reader.setDefaultPrompt(prompt);
 
