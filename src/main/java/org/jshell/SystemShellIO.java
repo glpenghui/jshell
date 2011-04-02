@@ -21,40 +21,27 @@
  */
 package org.jshell;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 /**
  *
  * @author Fabien Barbero
  */
-public final class ShellHandler {
+final class SystemShellIO extends ShellIO {
 
-    private final BufferedReader reader;
-
-    ShellHandler() {
-        reader = new BufferedReader(new InputStreamReader(System.in));
-    }
-
-    public String readLine() {
-        try {
-            return reader.readLine().trim();
-        } catch (IOException ex) {
-            throw new UnsupportedOperationException("Error reading line", ex);
-        }
-    }
-
+    @Override
     public void println(String str) {
+        super.println(str);
         System.out.println(str);
     }
 
+    @Override
     public void println() {
         System.out.println();
     }
-    
-    void printException(Exception ex) {
-        ex.printStackTrace(System.err);
+
+    @Override
+    public void print(String str) {
+        System.out.print(str);
     }
+
 
 }

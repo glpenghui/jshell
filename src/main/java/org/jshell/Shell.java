@@ -33,7 +33,6 @@ public class Shell {
 
     private static final String SPLIT_REGEX = "\\s+(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
 
-    private final ShellHandler shellHandler = new ShellHandler();
     private final Set<ShellCommand> commands = new HashSet<ShellCommand>();
 
     private String header;
@@ -84,30 +83,47 @@ public class Shell {
      * Start of the shell.
      */
     public final synchronized void start() {
+        ShellIO shellIO = new SystemShellIO();
+
         if(header != null) {
-            shellHandler.println(header);
-            shellHandler.println();
+            shellIO.println(header);
+            shellIO.println();
         }
         
         while(true) {
-            shellHandler.println(prompt);
-            String line = shellHandler.readLine();
+            shellIO.print(prompt);
+            String line = shellIO.readLine();
 
-            String[] splittedLine = splitCommandLine(line);
-            if(splittedLine.length > 0) {
-                ShellCommand command = findCommandByName(splittedLine[0]);
-                if(command == null) {
-                    
+            ShellBuffer buffer = null;
+            String[] commandsStr = line.split("\\|");
+
+            for(int i=0; i<commandsStr.length; i++) {
+                ShellIO commandIO;
+                if(i == commandsStr.length -1) {
+                    commandIO = shellIO;
                 } else {
-                    try {
-                        command.execute(new ArgumentsList(Arrays.copyOfRange(splittedLine, 1, splittedLine.length)),
-                                        shellHandler);
-                    } catch(Exception ex) {
-                        shellHandler.printException(ex);
+                    commandIO = new ShellIO();
+                }
+                String[] splitCommand = splitCommandLine(commandsStr[i].trim());
+                if(splitCommand.length > 0) {
+                    ShellCommand shellCommand = findCommandByName(splitCommand[0].trim());
+                    if(shellCommand == null) {
+                        shellIO.println("No command found with name '" + splitCommand[0] + "'");
+                        break;
+                    } else {
+                        try {
+                            ArgumentsList argumentsList = new ArgumentsList(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
+                            shellCommand.execute(argumentsList, buffer, commandIO);
+                            buffer = commandIO.getBuffer();
+                        } catch(Exception ex) {
+                            ex.printStackTrace();
+                            break;
+                        }
                     }
                 }
             }
-            shellHandler.println();
+
+            shellIO.println();
         }
     }
 
@@ -123,7 +139,9 @@ public class Shell {
 
     private ShellCommand findCommandByName(String name) {
         for(ShellCommand command : commands) {
-            if(command.name().equals(name));
+            if(command.name().equals(name)) {
+                return command;
+            }
         }
         return null;
     }

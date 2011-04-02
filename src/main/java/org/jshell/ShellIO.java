@@ -21,14 +21,54 @@
  */
 package org.jshell;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  *
  * @author Fabien Barbero
  */
-public interface ShellCommand {
+public class ShellIO {
 
-    String name();
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private final ShellBuffer buffer = new ShellBuffer();
 
-    void execute(ArgumentsList args, ShellBuffer inputBuffer, ShellIO handler) throws Exception;
+    /**
+     * Ask a text in the shell.
+     * @return The text typed in the shell.
+     */
+    public final String readLine() {
+        try {
+            return reader.readLine().trim();
+        } catch (IOException ex) {
+            throw new UnsupportedOperationException("Error reading line", ex);
+        }
+    }
+
+    /**
+     * Print a line in the shell.
+     * @param str The line to print.
+     */
+    public void println(String str) {
+        buffer.addLine(str);
+    }
+
+    void print(String str) {
+    }
+
+    /**
+     * Print an empty line in the shell.
+     */
+    public void println() {
+    }
+
+    /**
+     * Get the input buffer (can be provided by an other command).
+     * @return The buffer.
+     */
+    ShellBuffer getBuffer() {
+        return buffer;
+    }
 
 }
